@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Jadob\Scribe\Message;
 
+/**
+ * @template T of object
+ */
 final readonly class Message
 {
     /**
+     * @param T $event
      * @param array<non-empty-string, string|int> $headers
      */
     private function __construct(
