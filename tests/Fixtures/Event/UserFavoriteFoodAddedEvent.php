@@ -25,12 +25,12 @@ final readonly class UserFavoriteFoodAddedEvent implements EventInterface
     }
 
     /**
-     * @param array{userId: non-empty-string, favoriteFoodName: non-empty-string} $payload
+     * @param array{eventId: non-empty-string, userId: non-empty-string, favoriteFoodName: non-empty-string} $payload
      */
-    public static function reconstitute(string $eventId, array $payload): self
+    public static function reconstitute(array $payload): self
     {
         return new self(
-            eventId: UuidEventId::fromString($eventId),
+            eventId: UuidEventId::fromString($payload['eventId']),
             userId: UuidAggregateId::fromString($payload['userId']),
             favoriteFoodName: $payload['favoriteFoodName'],
         );

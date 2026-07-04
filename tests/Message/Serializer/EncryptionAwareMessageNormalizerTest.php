@@ -87,7 +87,6 @@ class EncryptionAwareMessageNormalizerTest extends TestCase
             ->normalize(
                 Message::create(
                     new UserCreatedEvent(
-                        id: UuidEventId::fromString('019f2d8c-7285-7aa0-99b3-3a1d672cf0eb'),
                         userId: UuidAggregateId::fromString('019f2d1c-f74c-7611-b8e3-4bffb97a12f2'),
                         username: 'jdoe',
                         email: 'j.doe1999@example.com'
@@ -104,7 +103,6 @@ class EncryptionAwareMessageNormalizerTest extends TestCase
                     '_aggregate_id' => '019f2d8c-7285-7aa0-99b3-3a1d672cf0eb',
                 ],
                 'payload' => [
-                    'id' => '019f2d8c-7285-7aa0-99b3-3a1d672cf0eb',
                     'userId' => '019f2d1c-f74c-7611-b8e3-4bffb97a12f2',
                     'username' => 'jdoe',
                     'email' => 'ENCRYPTED_fd9eceba31d0de547a6410a5e63f4851',

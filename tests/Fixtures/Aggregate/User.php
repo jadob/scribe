@@ -7,7 +7,6 @@ namespace Jadob\Scribe\Fixtures\Aggregate;
 use Jadob\Scribe\Aggregate\AbstractAggregate;
 use Jadob\Scribe\Aggregate\Id\AggregateRootIdInterface;
 use Jadob\Scribe\Event\EventInterface;
-use Jadob\Scribe\Event\Id\UuidEventId;
 use Jadob\Scribe\Fixtures\Event\UserCreatedEvent;
 
 final class User extends AbstractAggregate
@@ -21,7 +20,6 @@ final class User extends AbstractAggregate
 
         $self->recordThat(
             new UserCreatedEvent(
-                UuidEventId::new7(),
                 $id,
                 $username,
                 $email

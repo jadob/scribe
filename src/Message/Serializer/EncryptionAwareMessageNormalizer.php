@@ -104,12 +104,9 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
                 $property->getAttributes(),
                 fn (ReflectionAttribute $attribute) => $attribute->getName() === EventPayload::class
             );
-
-            //  var_dump($attributes);
         }
 
         $event = $eventFqcn::reconstitute(
-            $eventId,
             $message['payload'],
         );
 
