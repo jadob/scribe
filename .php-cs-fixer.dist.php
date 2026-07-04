@@ -40,6 +40,10 @@ return new PhpCsFixer\Config()
         'yoda_style' => false,
         'phpdoc_to_comment' => false,
         'void_return' => true,
+        'visibility_required' => false,
+        'modifier_keywords' => [
+            'elements' => ['method', 'const']
+        ],
 
     ])
     ->setRiskyAllowed(true)
