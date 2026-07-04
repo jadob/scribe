@@ -9,12 +9,15 @@ use Jadob\Scribe\Message\Message;
 
 interface MessageRepositoryInterface
 {
+    /**
+     * @param Message<EventInterface> ...$message
+     */
     public function store(
-        Message ...$message
+        Message ...$message,
     ): void;
 
     /**
-     * @return array<Message>
+     * @return array<Message<EventInterface>>
      */
     public function load(
         AggregateRootIdInterface $aggregateRootId

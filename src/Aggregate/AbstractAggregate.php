@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Jadob\Scribe\Aggregate;
 
 use Jadob\Scribe\Aggregate\Id\AggregateRootIdInterface;
+use Jadob\Scribe\Event\EventInterface;
 
 abstract class AbstractAggregate implements AggregateRootInterface
 {
@@ -13,11 +14,11 @@ abstract class AbstractAggregate implements AggregateRootInterface
     private int $aggregateRevision = 0;
 
     /**
-     * @var array<int, object>
+     * @var array<int, EventInterface>
      */
     private array $recordedEvents = [];
 
-    protected function recordThat(object $event): void
+    protected function recordThat(EventInterface $event): void
     {
         ++$this->aggregateRevision;
         $this->recordedEvents[$this->aggregateRevision] = $event;
@@ -30,7 +31,7 @@ abstract class AbstractAggregate implements AggregateRootInterface
     }
 
     /**
-     * @return array<int, object>
+     * @return array<int, EventInterface>
      */
     public function popEvents(): array
     {
@@ -40,9 +41,12 @@ abstract class AbstractAggregate implements AggregateRootInterface
         return $events;
     }
 
+    /**
+     * @param array<EventInterface> $events
+     */
     public static function recreate(
         AggregateRootIdInterface $aggregateRootId,
-        array $events
+        array $events,
     ): self {
         $self = new static();
         $self->aggregateId = $aggregateRootId;
@@ -53,5 +57,5 @@ abstract class AbstractAggregate implements AggregateRootInterface
         return $self;
     }
 
-    abstract protected function handle(object $event): void;
+    abstract protected function handle(EventInterface $event): void;
 }

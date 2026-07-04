@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Jadob\Scribe\Message;
 
+use Jadob\Scribe\Event\EventInterface;
+
 /**
- * @template T of object
+ * @template-covariant T of EventInterface
  */
 final readonly class Message
 {
@@ -14,14 +16,22 @@ final readonly class Message
      * @param array<non-empty-string, string|int> $headers
      */
     private function __construct(
-        private(set) object $event,
+        private(set) EventInterface $event,
         private(set) array $headers = [],
     ) {
     }
 
+    /**
+     * @template E of EventInterface
+     *
+     * @param E $event
+     * @param array<non-empty-string, string|int> $headers
+     *
+     * @return Message<E>
+     */
     public static function create(
-        object $event,
-        array $headers = []
+        EventInterface $event,
+        array $headers = [],
     ): self {
         return new self(
             $event,
@@ -31,11 +41,14 @@ final readonly class Message
 
     /**
      * @param non-empty-string $key
+     *
+     * @return Message<T>
      */
     public function withHeader(
         string $key,
-        string|int $value
-    ): self {
+        string|int $value,
+    ): self
+    {
         $headers = $this->headers;
         $headers[$key] = $value;
 

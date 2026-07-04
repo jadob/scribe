@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Jadob\Scribe\Message\Serializer;
 
+use Jadob\Scribe\Event\EventInterface;
 use Jadob\Scribe\Message\Message;
 
 /**
- * @template T of object
+ * @template T of EventInterface
  * @psalm-type MessagePayload array{headers: array<non-empty-string, string|int>, payload: array<string,mixed>}
  */
 interface MessageNormalizerInterface

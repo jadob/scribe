@@ -16,6 +16,8 @@ use function is_object;
 use function sprintf;
 
 /**
+ * @template T of EventInterface
+ * @implements MessageNormalizerInterface<T>
  * @psalm-import-type MessagePayload from MessageNormalizerInterface
  */
 final readonly class EncryptionAwareMessageNormalizer implements MessageNormalizerInterface
@@ -26,6 +28,7 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
     }
 
     /**
+     * @param Message<T> $message
      * @return MessagePayload
      */
     public function normalize(Message $message): array
@@ -56,8 +59,10 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
     }
 
     /**
-     * @param MessagePayload               $message
-     * @param class-string<EventInterface> $eventFqcn
+     * @param MessagePayload    $message
+     * @param class-string<T>   $eventFqcn
+     *
+     * @return Message<T>
      */
     public function denormalize(
         array $message,
