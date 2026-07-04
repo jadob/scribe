@@ -15,9 +15,13 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final readonly class EventPayload
 {
+    /**
+     * @param string|null $unserializeMethod used to restore the object from persistence
+     */
     public function __construct(
         private(set) ?string $key = null,
-        private bool $encrypted = false
+        private bool $encrypted = false,
+        private(set) ?string $unserializeMethod = null,
     ) {
     }
 }
