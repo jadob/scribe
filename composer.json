@@ -5,7 +5,8 @@
   "type": "library",
   "require": {
     "php": "^8.4",
-    "ramsey/uuid": "^4.9"
+    "ramsey/uuid": "^4.9",
+    "ext-openssl": "*"
   },
   "autoload": {
     "psr-4": {
