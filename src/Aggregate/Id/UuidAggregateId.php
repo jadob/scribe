@@ -24,15 +24,10 @@ class UuidAggregateId implements AggregateRootIdInterface
         return new self(Uuid::fromString($id));
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this
             ->uuid
             ->toString();
-    }
-
-    public function __toString(): string
-    {
-        return $this->toString();
     }
 }

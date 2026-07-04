@@ -9,18 +9,16 @@ use Jadob\Scribe\Aggregate\Id\UuidAggregateId;
 use Jadob\Scribe\Event\EventInterface;
 use Jadob\Scribe\Event\EventPayload;
 use Jadob\Scribe\Event\Id\EventIdInterface;
-use Jadob\Scribe\Event\Id\UuidBinaryEventId;
+use Jadob\Scribe\Event\Id\UuidEventId;
 
 final class UserCreatedEvent implements EventInterface
 {
-    private EventIdInterface $id;
-
     public function __construct(
+        private(set) readonly EventIdInterface $id,
         private(set) readonly AggregateRootIdInterface $userId,
         private(set) readonly string $username,
         #[EventPayload(encrypted: true)] private(set) readonly string $email,
     ) {
-        $this->id = UuidBinaryEventId::new7();
     }
 
     public function getEventId(): EventIdInterface
@@ -34,6 +32,7 @@ final class UserCreatedEvent implements EventInterface
     public static function reconstitute(string $eventId, array $payload): self
     {
         return new self(
+            id: UuidEventId::fromString($eventId),
             userId: UuidAggregateId::fromString($payload['userId']),
             username: $payload['username'],
             email: $payload['email'],

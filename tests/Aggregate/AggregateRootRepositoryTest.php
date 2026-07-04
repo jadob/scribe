@@ -86,7 +86,7 @@ class AggregateRootRepositoryTest extends TestCase
 
                     $message = $messages[0];
                     self::assertInstanceOf(UserCreatedEvent::class, $message->event);
-                    self::assertSame($aggregateId->toString(), $message->headers[MessageHeader::AGGREGATE_ID]);
+                    self::assertSame((string) $aggregateId, $message->headers[MessageHeader::AGGREGATE_ID]);
                     self::assertSame(1, $message->headers[MessageHeader::AGGREGATE_REVISION]);
                     self::assertSame(User::class, $message->headers[MessageHeader::AGGREGATE_TYPE]);
                 }

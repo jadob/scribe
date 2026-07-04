@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Jadob\Scribe\Message\Serializer;
 
 use Jadob\Scribe\Aggregate\Id\UuidAggregateId;
-use Jadob\Scribe\Event\Id\UuidEventId;
 use Jadob\Scribe\Event\EventInterface;
+use Jadob\Scribe\Event\Id\UuidEventId;
+use Jadob\Scribe\Fixtures\Event\UserCreatedEvent;
 use Jadob\Scribe\Fixtures\Event\UserFavoriteFoodAddedEvent;
 use Jadob\Scribe\Message\Encryption\EventEncryptionProviderInterface;
+use Jadob\Scribe\Message\Encryption\Key\EncryptionKeyProviderInterface;
 use Jadob\Scribe\Message\Message;
 use Jadob\Scribe\Message\MessageHeader;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -27,6 +29,7 @@ class EncryptionAwareMessageNormalizerTest extends TestCase
 
         $this->normalizer = new EncryptionAwareMessageNormalizer(
             $this->eventEncryptionProviderMock,
+            $this->createStub(EncryptionKeyProviderInterface::class),
         );
     }
 
@@ -45,9 +48,11 @@ class EncryptionAwareMessageNormalizerTest extends TestCase
                         eventId: UuidEventId::fromString('019f2d1f-3eec-7f6f-8865-2af1f6a0d5ee'),
                         userId: UuidAggregateId::fromString('019f2d1c-f74c-7611-b8e3-4bffb97a12f2'),
                         favoriteFoodName: 'spaghetti'
-                    )
+                    ),
+                    [
+                        MessageHeader::AGGREGATE_REVISION => 1,
+                    ]
                 )
-                    ->withHeader(MessageHeader::AGGREGATE_REVISION, 1)
             );
 
         self::assertSame(
@@ -59,6 +64,50 @@ class EncryptionAwareMessageNormalizerTest extends TestCase
                     'eventId' => '019f2d1f-3eec-7f6f-8865-2af1f6a0d5ee',
                     'userId' => '019f2d1c-f74c-7611-b8e3-4bffb97a12f2',
                     'favoriteFoodName' => 'spaghetti',
+                ],
+            ],
+            $result
+        );
+    }
+
+    public function testEventNormalizationWithEncryptedProperties(): void
+    {
+        $this
+            ->eventEncryptionProviderMock
+            ->expects($this->once())
+            ->method('encrypt')
+            ->willReturnCallback(
+                function (string $prop) {
+                    return sprintf('ENCRYPTED_%s', md5($prop));
+                }
+            );
+
+        $result = $this
+            ->normalizer
+            ->normalize(
+                Message::create(
+                    new UserCreatedEvent(
+                        id: UuidEventId::fromString('019f2d8c-7285-7aa0-99b3-3a1d672cf0eb'),
+                        userId: UuidAggregateId::fromString('019f2d1c-f74c-7611-b8e3-4bffb97a12f2'),
+                        username: 'jdoe',
+                        email: 'j.doe1999@example.com'
+                    ),
+                    [
+                        MessageHeader::AGGREGATE_ID => '019f2d8c-7285-7aa0-99b3-3a1d672cf0eb',
+                    ]
+                )
+            );
+
+        self::assertSame(
+            [
+                'headers' => [
+                    '_aggregate_id' => '019f2d8c-7285-7aa0-99b3-3a1d672cf0eb',
+                ],
+                'payload' => [
+                    'id' => '019f2d8c-7285-7aa0-99b3-3a1d672cf0eb',
+                    'userId' => '019f2d1c-f74c-7611-b8e3-4bffb97a12f2',
+                    'username' => 'jdoe',
+                    'email' => 'ENCRYPTED_fd9eceba31d0de547a6410a5e63f4851',
                 ],
             ],
             $result

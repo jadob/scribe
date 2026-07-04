@@ -20,7 +20,7 @@ final readonly class EventPayload
      */
     public function __construct(
         private(set) ?string $key = null,
-        private bool $encrypted = false,
+        private(set) bool $encrypted = false,
         private(set) ?string $unserializeMethod = null,
     ) {
     }
