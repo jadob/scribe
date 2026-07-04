@@ -9,15 +9,15 @@ use Jadob\Scribe\Message\Message;
 /**
  * @psalm-type MessagePayload array{headers: array<non-empty-string, string|int>, payload: array<string,mixed>}
  */
-interface MessageSerializerInterface
+interface MessageNormalizerInterface
 {
     /**
      * @return MessagePayload
      */
-    public function serialize(Message $message): array;
+    public function normalize(Message $message): array;
 
     /**
      * @param MessagePayload $message
      */
-    public function unserialize(array $message): Message;
+    public function denormalize(array $message): Message;
 }
