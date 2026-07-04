@@ -18,6 +18,10 @@ abstract class AbstractAggregate implements AggregateRootInterface
      */
     private array $recordedEvents = [];
 
+    final public function __construct()
+    {
+    }
+
     protected function recordThat(EventInterface $event): void
     {
         ++$this->aggregateRevision;
