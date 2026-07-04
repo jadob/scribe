@@ -11,9 +11,8 @@ final readonly class Message
      */
     private function __construct(
         private(set) object $event,
-        private(set) array  $headers = [],
-    )
-    {
+        private(set) array $headers = [],
+    ) {
     }
 
     public static function create(object $event): self
@@ -22,10 +21,9 @@ final readonly class Message
     }
 
     public function withHeader(
-        string     $key,
+        string $key,
         string|int $value
-    ): self
-    {
+    ): self {
         $headers = $this->headers;
         $headers[$key] = $value;
 
