@@ -7,7 +7,7 @@ namespace Jadob\Scribe\Message;
 final readonly class Message
 {
     /**
-     * @param array<string, string|int> $headers
+     * @param array<non-empty-string, string|int> $headers
      */
     private function __construct(
         private(set) object $event,
@@ -15,11 +15,19 @@ final readonly class Message
     ) {
     }
 
-    public static function create(object $event): self
-    {
-        return new self($event);
+    public static function create(
+        object $event,
+        array $headers = []
+    ): self {
+        return new self(
+            $event,
+            $headers
+        );
     }
 
+    /**
+     * @param non-empty-string $key
+     */
     public function withHeader(
         string $key,
         string|int $value

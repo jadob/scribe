@@ -19,5 +19,9 @@ interface MessageNormalizerInterface
     /**
      * @param MessagePayload $message
      */
-    public function denormalize(array $message): Message;
+    public function denormalize(
+        array $message,
+        string $eventId,
+        string $eventFqcn
+    ): Message;
 }

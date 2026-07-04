@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Jadob\Scribe\Message\Serializer;
 
+use Jadob\Scribe\Event\EventInterface;
 use Jadob\Scribe\Message\Encryption\EventEncryptionProviderInterface;
 use Jadob\Scribe\Message\Message;
 use LogicException;
 use ReflectionClass;
 use Stringable;
+
 use function get_class;
 use function is_object;
 use function sprintf;
@@ -53,7 +55,23 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
         ];
     }
 
-    public function denormalize(array $message): Message
-    {
+    /**
+     * @param MessagePayload               $message
+     * @param class-string<EventInterface> $eventFqcn
+     */
+    public function denormalize(
+        array $message,
+        string $eventId,
+        string $eventFqcn
+    ): Message {
+        $event = $eventFqcn::reconstitute(
+            $eventId,
+            $message['payload'],
+        );
+
+        return Message::create(
+            $event,
+            $message['headers'],
+        );
     }
 }
