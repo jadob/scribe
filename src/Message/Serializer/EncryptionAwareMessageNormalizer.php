@@ -45,10 +45,6 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
                 $val = (string) $val;
             }
 
-            if (is_object($val) && !($val instanceof Stringable)) {
-                throw new LogicException(sprintf('class "%s" must implement Stringable in order to be serialized.', get_class($val)));
-            }
-
             $eventPayload[$key] = $val;
         }
 
@@ -67,7 +63,7 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
     public function denormalize(
         array $message,
         string $eventId,
-        string $eventFqcn
+        string $eventFqcn,
     ): Message {
         $event = $eventFqcn::reconstitute(
             $eventId,
