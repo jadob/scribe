@@ -12,7 +12,7 @@ use Jadob\Scribe\Event\EventInterface;
 final readonly class Message
 {
     /**
-     * @param T $event
+     * @param T                                   $event
      * @param array<non-empty-string, string|int> $headers
      */
     private function __construct(
@@ -24,7 +24,7 @@ final readonly class Message
     /**
      * @template E of EventInterface
      *
-     * @param E $event
+     * @param E                                   $event
      * @param array<non-empty-string, string|int> $headers
      *
      * @return Message<E>
@@ -35,7 +35,7 @@ final readonly class Message
     ): self {
         return new self(
             $event,
-            $headers
+            $headers,
         );
     }
 
@@ -47,8 +47,7 @@ final readonly class Message
     public function withHeader(
         string $key,
         string|int $value,
-    ): self
-    {
+    ): self {
         $headers = $this->headers;
         $headers[$key] = $value;
 

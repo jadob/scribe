@@ -46,7 +46,7 @@ readonly class AggregateRootRepository
         $messages = [];
         foreach ($events as $revision => $event) {
             $messages[] = Message::create($event)
-                ->withHeader(MessageHeader::AGGREGATE_ID, $aggregateId->toString())
+                ->withHeader(MessageHeader::AGGREGATE_ID, (string) $aggregateId)
                 ->withHeader(MessageHeader::AGGREGATE_REVISION, $revision)
                 ->withHeader(MessageHeader::AGGREGATE_TYPE, $aggregateFqcn)
                 ->withHeader(MessageHeader::RECORDED_AT, new DateTime()->getTimestamp());

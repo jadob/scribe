@@ -33,7 +33,7 @@ class AggregateRootRepositoryTest extends TestCase
         $repository->store(User::create(
             UuidBinaryAggregateId::new7(),
             'jdoe',
-            'jdoe@example.com'
+            'jdoe@example.com',
         ));
     }
 

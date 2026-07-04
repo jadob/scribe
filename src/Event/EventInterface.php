@@ -10,8 +10,11 @@ interface EventInterface
 {
     public function getEventId(): EventIdInterface;
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function reconstitute(
         string $eventId,
-        array $payload
-    ): self;
+        array $payload,
+    ): static;
 }

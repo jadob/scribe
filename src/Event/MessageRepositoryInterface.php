@@ -20,6 +20,6 @@ interface MessageRepositoryInterface
      * @return array<Message<EventInterface>>
      */
     public function load(
-        AggregateRootIdInterface $aggregateRootId
+        AggregateRootIdInterface $aggregateRootId,
     ): array;
 }
