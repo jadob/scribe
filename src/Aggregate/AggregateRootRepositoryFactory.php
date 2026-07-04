@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Jadob\Scribe\Aggregate;
 
-use Jadob\Scribe\Event\MessageRepositoryInterface;
+use Jadob\Scribe\Message\MessageRepositoryInterface;
 
 /**
  * @template T of AggregateRootInterface

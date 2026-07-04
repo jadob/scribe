@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Jadob\Scribe\Event;
+namespace Jadob\Scribe\Message;
 
 use Jadob\Scribe\Aggregate\Id\AggregateRootIdInterface;
-use Jadob\Scribe\Message\Message;
 
 interface MessageRepositoryInterface
 {
@@ -17,7 +16,7 @@ interface MessageRepositoryInterface
     ): void;
 
     /**
-     * @return array<Message<EventInterface>>
+     * @return Message
      */
     public function load(
         AggregateRootIdInterface $aggregateRootId,

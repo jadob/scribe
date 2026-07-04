@@ -8,12 +8,12 @@ use Jadob\Scribe\Aggregate\Exception\NoEventsRecordedException;
 use Jadob\Scribe\Aggregate\Exception\UnsupportedAggregateTypeException;
 use Jadob\Scribe\Aggregate\Id\UuidAggregateId;
 use Jadob\Scribe\Aggregate\Id\UuidBinaryAggregateId;
-use Jadob\Scribe\Event\MessageRepositoryInterface;
 use Jadob\Scribe\Fixtures\Aggregate\Order;
 use Jadob\Scribe\Fixtures\Aggregate\User;
 use Jadob\Scribe\Fixtures\Event\UserCreatedEvent;
 use Jadob\Scribe\Message\Message;
 use Jadob\Scribe\Message\MessageHeader;
+use Jadob\Scribe\Message\MessageRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 class AggregateRootRepositoryTest extends TestCase

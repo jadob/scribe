@@ -7,10 +7,9 @@ namespace Jadob\Scribe\Aggregate;
 use DateTime;
 use Jadob\Scribe\Aggregate\Exception\NoEventsRecordedException;
 use Jadob\Scribe\Aggregate\Exception\UnsupportedAggregateTypeException;
-use Jadob\Scribe\Event\MessageRepositoryInterface;
 use Jadob\Scribe\Message\Message;
 use Jadob\Scribe\Message\MessageHeader;
-
+use Jadob\Scribe\Message\MessageRepositoryInterface;
 use function count;
 use function get_class;
 
