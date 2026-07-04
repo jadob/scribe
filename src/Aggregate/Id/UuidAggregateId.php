@@ -30,4 +30,9 @@ class UuidAggregateId implements AggregateRootIdInterface
             ->uuid
             ->toString();
     }
+
+    public function __toString(): string
+    {
+        return $this->toString();
+    }
 }

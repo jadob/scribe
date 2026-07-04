@@ -24,7 +24,7 @@ class UuidBinaryAggregateId implements AggregateRootIdInterface
         return new self(Uuid::fromBytes($id));
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
         return $this
             ->uuid
