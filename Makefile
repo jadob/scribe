@@ -10,5 +10,7 @@ psalm:
 rector:
 	vendor/bin/rector process
 
+phpunit:
+	vendor/bin/phpunit
 
 checks: rector cs-fix phpstan psalm
