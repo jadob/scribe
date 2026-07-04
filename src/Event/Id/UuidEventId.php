@@ -7,7 +7,7 @@ namespace Jadob\Scribe\Event\Id;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-class UuidBinaryEventId implements EventIdInterface
+class UuidEventId implements EventIdInterface
 {
     public function __construct(
         private UuidInterface $uuid,
@@ -21,13 +21,13 @@ class UuidBinaryEventId implements EventIdInterface
 
     public static function fromString(string $eventId): self
     {
-        return new self(Uuid::fromBytes($eventId));
+        return new self(Uuid::fromString($eventId));
     }
 
     public function __toString(): string
     {
         return $this
             ->uuid
-            ->getBytes();
+            ->toString();
     }
 }
