@@ -42,10 +42,7 @@ final readonly class DoctrineAes256GcmEncryptionKeyProvider implements Encryptio
     private function ensureSchemaExists(): void
     {
         $schemaManager = $this->connection->createSchemaManager();
-        $exists = $schemaManager
-            ->tablesExist([
-                self::ENCRYPTION_KEYS_TABLE,
-            ]);
+        $exists = $this->tableExists(self::ENCRYPTION_KEYS_TABLE);
 
         if ($exists) {
             return;
@@ -79,5 +76,37 @@ final readonly class DoctrineAes256GcmEncryptionKeyProvider implements Encryptio
         );
 
         $schemaManager->createTable($schema);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function tableExists(
+        string $table
+    ): bool {
+        $databaseName = $this
+            ->connection
+            ->getDatabase();
+
+        if ($databaseName === null) {
+            throw new LogicException('DBAL connection does not contain information about database name.');
+        }
+
+        /** @var int $result */
+        $result = $this
+            ->connection
+            ->fetchOne(
+                '
+                SELECT COUNT(*) as count
+                FROM information_schema.TABLES
+                WHERE TABLE_SCHEMA = :db_name
+                  AND TABLE_NAME = :table_name',
+                [
+                    'db_name' => $databaseName,
+                    'table_name' => $table,
+                ]
+            );
+
+        return (bool) $result;
     }
 }
