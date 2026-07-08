@@ -47,8 +47,6 @@ final readonly class DoctrineAes256GcmEncryptionKeyProvider implements Encryptio
                 self::ENCRYPTION_KEYS_TABLE,
             ]);
 
-        dd($schemaManager->listTables());
-        dd($exists);
         if ($exists) {
             return;
         }
