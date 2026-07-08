@@ -5,13 +5,20 @@ declare(strict_types=1);
 namespace Jadob\Scribe\Message\Encryption\Key;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Name\UnqualifiedName;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
+use LogicException;
 use Ramsey\Uuid\Uuid;
+
+use Random\RandomException;
+use function bin2hex;
+use function hex2bin;
+use function random_bytes;
 
 final readonly class DoctrineAes256GcmEncryptionKeyProvider implements EncryptionKeyProviderInterface
 {
@@ -22,13 +29,18 @@ final readonly class DoctrineAes256GcmEncryptionKeyProvider implements Encryptio
     ) {
     }
 
+    /**
+     * @throws RandomException
+     * @throws Exception
+     */
     public function getForAggregate(string $aggregateRootId): EncryptionKeyInterface
     {
         $this->ensureSchemaExists();
 
         $uuid = Uuid::fromString($aggregateRootId);
 
-        $existing = $this
+        /** @var string|false $encryptionKey */
+        $encryptionKey = $this
             ->connection
             ->createQueryBuilder()
             ->select('encryption_key')
@@ -37,6 +49,22 @@ final readonly class DoctrineAes256GcmEncryptionKeyProvider implements Encryptio
             ->setParameter('aggregate_id', $uuid->getBytes())
             ->fetchOne();
 
+        if ($encryptionKey !== false) {
+            return new StringEncryptionKey(
+                hex2bin($encryptionKey)
+            );
+        }
+
+        $encryptionKey = random_bytes(12);
+
+        $this
+            ->connection
+            ->insert(self::ENCRYPTION_KEYS_TABLE, [
+                'aggregate_id' => $uuid->getBytes(),
+                'encryption_key' => bin2hex($encryptionKey),
+            ]);
+
+        return new StringEncryptionKey($encryptionKey);
     }
 
     private function ensureSchemaExists(): void
@@ -59,7 +87,7 @@ final readonly class DoctrineAes256GcmEncryptionKeyProvider implements Encryptio
                     ->create(),
                 Column::editor()
                     ->setName(UnqualifiedName::quoted('encryption_key'))
-                    ->setLength(16)
+                    ->setLength(24)
                     ->setType(Type::getType(Types::TEXT))
                     ->setNotNull(true)
                     ->create(),
