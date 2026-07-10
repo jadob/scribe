@@ -12,6 +12,7 @@ use Doctrine\DBAL\Schema\Name\UnqualifiedName;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
+use Jadob\Scribe\Doctrine\DbalConnectionService;
 use LogicException;
 use Ramsey\Uuid\Uuid;
 
@@ -26,6 +27,7 @@ final readonly class DoctrineAes256GcmEncryptionKeyProvider implements Encryptio
 
     public function __construct(
         private Connection $connection,
+        private DbalConnectionService $connectionService,
     ) {
     }
 
@@ -70,7 +72,9 @@ final readonly class DoctrineAes256GcmEncryptionKeyProvider implements Encryptio
     private function ensureSchemaExists(): void
     {
         $schemaManager = $this->connection->createSchemaManager();
-        $exists = $this->tableExists(self::ENCRYPTION_KEYS_TABLE);
+        $exists = $this
+            ->connectionService
+            ->tableExists(self::ENCRYPTION_KEYS_TABLE);
 
         if ($exists) {
             return;
@@ -109,32 +113,5 @@ final readonly class DoctrineAes256GcmEncryptionKeyProvider implements Encryptio
     /**
      * @throws Exception
      */
-    private function tableExists(
-        string $table
-    ): bool {
-        $databaseName = $this
-            ->connection
-            ->getDatabase();
 
-        if ($databaseName === null) {
-            throw new LogicException('DBAL connection does not contain information about database name.');
-        }
-
-        /** @var int $result */
-        $result = $this
-            ->connection
-            ->fetchOne(
-                '
-                SELECT COUNT(*) as count
-                FROM information_schema.TABLES
-                WHERE TABLE_SCHEMA = :db_name
-                  AND TABLE_NAME = :table_name',
-                [
-                    'db_name' => $databaseName,
-                    'table_name' => $table,
-                ]
-            );
-
-        return (bool) $result;
-    }
 }
