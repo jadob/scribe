@@ -6,7 +6,8 @@
   "require": {
     "php": "^8.4",
     "ramsey/uuid": "^4.9",
-    "ext-openssl": "*"
+    "ext-openssl": "*",
+    "doctrine/dbal": "^4.4"
   },
   "autoload": {
     "psr-4": {
