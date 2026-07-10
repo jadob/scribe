@@ -9,10 +9,10 @@ use Jadob\Scribe\Aggregate\Id\AggregateRootIdInterface;
 interface MessageRepositoryInterface
 {
     /**
-     * @param Message<EventInterface> ...$message
+     * @param Message<EventInterface> ...$messages
      */
     public function store(
-        Message ...$message,
+        Message ...$messages,
     ): void;
 
     /**
