@@ -10,7 +10,7 @@ use Jadob\Scribe\Message\Message;
 interface EventDispatcherInterface
 {
     /**
-     * @param Message<EventInterface> ...$messages
+     * @param object ...$events
      */
-    public function dispatch(Message ...$messages): void;
+    public function dispatch(object ...$event): void;
 }

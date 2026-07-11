@@ -14,7 +14,7 @@ abstract class AbstractAggregate implements AggregateRootInterface
     private int $aggregateRevision = 0;
 
     /**
-     * @var array<int, EventInterface>
+     * @var array<int, object>
      */
     private array $recordedEvents = [];
 
@@ -22,7 +22,7 @@ abstract class AbstractAggregate implements AggregateRootInterface
     {
     }
 
-    protected function recordThat(EventInterface $event): void
+    protected function recordThat(object $event): void
     {
         ++$this->aggregateRevision;
         $this->recordedEvents[$this->aggregateRevision] = $event;
@@ -35,7 +35,7 @@ abstract class AbstractAggregate implements AggregateRootInterface
     }
 
     /**
-     * @return array<int, EventInterface>
+     * @return array<int, object>
      */
     public function popEvents(): array
     {
@@ -46,7 +46,7 @@ abstract class AbstractAggregate implements AggregateRootInterface
     }
 
     /**
-     * @param array<EventInterface> $events
+     * @param array<object> $events
      */
     public static function recreate(
         AggregateRootIdInterface $aggregateRootId,
@@ -61,5 +61,5 @@ abstract class AbstractAggregate implements AggregateRootInterface
         return $self;
     }
 
-    abstract protected function handle(EventInterface $event): void;
+    abstract protected function handle(object $event): void;
 }

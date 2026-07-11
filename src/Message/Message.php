@@ -7,7 +7,7 @@ namespace Jadob\Scribe\Message;
 use Jadob\Scribe\Event\EventInterface;
 
 /**
- * @template-covariant T of EventInterface
+ * @template-covariant T of object
  */
 final readonly class Message
 {
@@ -16,13 +16,13 @@ final readonly class Message
      * @param array<non-empty-string, string|int> $headers
      */
     private function __construct(
-        private(set) EventInterface $event,
+        private(set) object $event,
         private(set) array $headers = [],
     ) {
     }
-
+    
     /**
-     * @template E of EventInterface
+     * @template E of object
      *
      * @param E                                   $event
      * @param array<non-empty-string, string|int> $headers
@@ -30,7 +30,7 @@ final readonly class Message
      * @return Message<E>
      */
     public static function create(
-        EventInterface $event,
+        object $event,
         array $headers = [],
     ): self {
         return new self(
