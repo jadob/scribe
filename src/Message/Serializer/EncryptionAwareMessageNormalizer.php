@@ -58,8 +58,8 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
                 $eventPayloadConfig = $attributes[0]->newInstance();
             }
 
-            $val = $property->getValue($event);
             $key = $property->getName();
+            $val = $normalizedEventPayload['event'][$key];
 
             if ($eventPayloadConfig !== null && $eventPayloadConfig->encrypted) {
                 if ($encryptionKey === null) {
