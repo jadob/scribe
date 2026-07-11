@@ -103,7 +103,7 @@ final readonly class DoctrineDbalMessageRepository implements MessageRepositoryI
                 Column::editor()
                     ->setName(UnqualifiedName::unquoted('payload'))
                     ->setType(Type::getType(Types::TEXT))
-                    ->setLength(2048)
+                    ->setLength(65535)
                     ->create()
             ],
             indexes: [
