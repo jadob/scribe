@@ -7,6 +7,8 @@ namespace Jadob\Scribe\Aggregate;
 use DateTime;
 use Jadob\Scribe\Aggregate\Exception\NoEventsRecordedException;
 use Jadob\Scribe\Aggregate\Exception\UnsupportedAggregateTypeException;
+use Jadob\Scribe\Aggregate\Id\AggregateRootIdInterface;
+use Jadob\Scribe\EventDispatcher\EventDispatcherInterface;
 use Jadob\Scribe\Message\Message;
 use Jadob\Scribe\Message\MessageHeader;
 use Jadob\Scribe\Message\MessageRepositoryInterface;
@@ -22,9 +24,11 @@ readonly class AggregateRootRepository
      * @param class-string<T> $aggregateRootClass
      */
     public function __construct(
-        private string $aggregateRootClass,
+        private string                     $aggregateRootClass,
         private MessageRepositoryInterface $messageRepository,
-    ) {
+        private EventDispatcherInterface   $eventDispatcher,
+    )
+    {
     }
 
     /**
@@ -54,6 +58,27 @@ readonly class AggregateRootRepository
         $this
             ->messageRepository
             ->store(...$messages);
+
+        $this
+            ->eventDispatcher
+            ->dispatch(...$events);
+    }
+
+
+    public function load(AggregateRootIdInterface $aggregateRootId): AggregateRootInterface
+    {
+        $messages = $this
+            ->messageRepository
+            ->load($aggregateRootId);
+
+
+        return $this->aggregateRootClass::recreate(
+            $aggregateRootId,
+            array_map(
+                fn(Message $message): object => $message->event,
+                $messages
+            )
+        );
     }
 
     /**
@@ -61,7 +86,8 @@ readonly class AggregateRootRepository
      */
     private function assertAggregateType(
         string $aggregateRootClass,
-    ): void {
+    ): void
+    {
         if ($this->aggregateRootClass !== $aggregateRootClass) {
             throw new UnsupportedAggregateTypeException(sprintf('Invalid aggregate type (received "%s", repository configured for "%s")', $aggregateRootClass, $this->aggregateRootClass));
         }

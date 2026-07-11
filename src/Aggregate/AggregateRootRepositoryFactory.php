@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Jadob\Scribe\Aggregate;
 
+use Jadob\Scribe\EventDispatcher\EventDispatcherInterface;
 use Jadob\Scribe\Message\MessageRepositoryInterface;
 
 /**
@@ -13,6 +14,7 @@ final readonly class AggregateRootRepositoryFactory
 {
     public function __construct(
         private MessageRepositoryInterface $messageRepository,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -27,6 +29,7 @@ final readonly class AggregateRootRepositoryFactory
         return new AggregateRootRepository(
             $aggregateClass,
             $this->messageRepository,
+            $this->eventDispatcher
         );
     }
 }
