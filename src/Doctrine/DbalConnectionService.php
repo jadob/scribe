@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jadob\Scribe\Doctrine;
 
 use Doctrine\DBAL\Connection;
@@ -8,8 +10,7 @@ final readonly class DbalConnectionService
 {
     public function __construct(
         private Connection $connection,
-    )
-    {
+    ) {
     }
 
     public function tableExists(

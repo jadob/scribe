@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Jadob\Scribe\Aggregate;
 
 use Jadob\Scribe\Aggregate\Id\AggregateRootIdInterface;
-use Jadob\Scribe\Event\EventInterface;
 
 abstract class AbstractAggregate implements AggregateRootInterface
 {
@@ -55,7 +54,7 @@ abstract class AbstractAggregate implements AggregateRootInterface
         $self = new static();
         $self->aggregateId = $aggregateRootId;
         foreach ($events as $event) {
-            $self->aggregateRevision++;
+            ++$self->aggregateRevision;
             $self->handle($event);
         }
 

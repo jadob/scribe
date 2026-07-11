@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Jadob\Scribe\Message\Serializer;
 
 use CuyZ\Valinor\Mapper\TreeMapper;
-use CuyZ\Valinor\Normalizer\Format;
 use CuyZ\Valinor\Normalizer\Normalizer;
-use CuyZ\Valinor\NormalizerBuilder;
 use Jadob\Scribe\Event\EventInterface;
 use Jadob\Scribe\Event\EventPayload;
 use Jadob\Scribe\Message\Encryption\EventEncryptionProviderInterface;
@@ -15,9 +13,7 @@ use Jadob\Scribe\Message\Encryption\Key\EncryptionKeyInterface;
 use Jadob\Scribe\Message\Encryption\Key\EncryptionKeyProviderInterface;
 use Jadob\Scribe\Message\Message;
 use Jadob\Scribe\Message\MessageHeader;
-use ReflectionAttribute;
 use ReflectionClass;
-use Stringable;
 
 /**
  * @template T of EventInterface
@@ -30,11 +26,10 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
 {
     public function __construct(
         private EventEncryptionProviderInterface $eventEncryptionProvider,
-        private EncryptionKeyProviderInterface   $encryptionKeyProvider,
+        private EncryptionKeyProviderInterface $encryptionKeyProvider,
         private Normalizer $normalizer,
         private TreeMapper $mapper,
-    )
-    {
+    ) {
     }
 
     /**
@@ -71,7 +66,7 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
                     $encryptionKey = $this
                         ->encryptionKeyProvider
                         ->getForAggregate(
-                            (string)$message->headers[MessageHeader::AGGREGATE_ID]
+                            (string) $message->headers[MessageHeader::AGGREGATE_ID]
                         );
                 }
 
@@ -81,7 +76,6 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
                         $val,
                         $encryptionKey,
                     );
-
             }
         }
 
@@ -89,7 +83,7 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
     }
 
     /**
-     * @param MessagePayload $message
+     * @param MessagePayload  $message
      * @param class-string<T> $eventFqcn
      *
      * @return Message<T>
@@ -117,7 +111,6 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
                 $eventFqcn,
                 $message['event']
             );
-
 
         return Message::create(
             $event,

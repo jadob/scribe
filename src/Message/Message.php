@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Jadob\Scribe\Message;
 
-use Jadob\Scribe\Event\EventInterface;
-
 /**
  * @template-covariant T of object
  */
@@ -20,7 +18,7 @@ final readonly class Message
         private(set) array $headers = [],
     ) {
     }
-    
+
     /**
      * @template E of object
      *

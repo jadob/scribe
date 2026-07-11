@@ -13,10 +13,9 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Jadob\Scribe\Doctrine\DbalConnectionService;
-use LogicException;
 use Ramsey\Uuid\Uuid;
-
 use Random\RandomException;
+
 use function bin2hex;
 use function hex2bin;
 use function random_bytes;
@@ -109,9 +108,4 @@ final readonly class DoctrineAes256GcmEncryptionKeyProvider implements Encryptio
 
         $schemaManager->createTable($schema);
     }
-
-    /**
-     * @throws Exception
-     */
-
 }

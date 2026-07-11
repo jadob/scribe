@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Jadob\Scribe\Message;
 
+use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Index;
@@ -22,10 +23,9 @@ final readonly class DoctrineDbalMessageRepository implements MessageRepositoryI
 
     public function __construct(
         private MessageSerializerInterface $messageSerializer,
-        private Connection                 $connection,
-        private DbalConnectionService      $connectionService,
-    )
-    {
+        private Connection $connection,
+        private DbalConnectionService $connectionService,
+    ) {
     }
 
     public function load(AggregateRootIdInterface $aggregateRootId): array
@@ -57,7 +57,7 @@ final readonly class DoctrineDbalMessageRepository implements MessageRepositoryI
                 ->messageSerializer
                 ->deserialize($rawMessage['payload']);
         }
-        
+
         return $output;
     }
 
@@ -84,7 +84,7 @@ final readonly class DoctrineDbalMessageRepository implements MessageRepositoryI
                         'aggregate_id' => Uuid::fromString($aggregateId)->getBytes(),
                         'aggregate_revision' => $eventVersion,
                         'aggregate_type' => $aggregateType,
-                        'recorded_at' => \DateTimeImmutable::createFromTimestamp($recordedAt)->format('Y-m-d H:i:s'),
+                        'recorded_at' => DateTimeImmutable::createFromTimestamp($recordedAt)->format('Y-m-d H:i:s'),
                         'payload' => $serializedMessage,
                     ]
                 );
@@ -132,7 +132,7 @@ final readonly class DoctrineDbalMessageRepository implements MessageRepositoryI
                     ->setName(UnqualifiedName::unquoted('payload'))
                     ->setType(Type::getType(Types::TEXT))
                     ->setLength(65535)
-                    ->create()
+                    ->create(),
             ],
             indexes: [
                 new Index(

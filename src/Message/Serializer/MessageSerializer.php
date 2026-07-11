@@ -7,6 +7,11 @@ namespace Jadob\Scribe\Message\Serializer;
 use Jadob\Scribe\Message\Message;
 use Jadob\Scribe\Message\MessageHeader;
 
+use function get_class;
+use function json_decode;
+use function json_encode;
+use const JSON_THROW_ON_ERROR;
+
 final readonly class MessageSerializer implements MessageSerializerInterface
 {
     public function __construct(
@@ -20,7 +25,7 @@ final readonly class MessageSerializer implements MessageSerializerInterface
         $event = $message->event;
         $eventType = $this
             ->inflector
-            ->fromFqcn(\get_class($event));
+            ->fromFqcn(get_class($event));
 
         $message = $message
             ->withHeader(MessageHeader::EVENT_TYPE, $eventType);
@@ -31,19 +36,20 @@ final readonly class MessageSerializer implements MessageSerializerInterface
                 $message
             );
 
-        return \json_encode(
+        return json_encode(
             $normalizedMessage,
-            \JSON_THROW_ON_ERROR);
+            JSON_THROW_ON_ERROR
+        );
     }
 
     public function deserialize(string $payload): Message
     {
-        $data = \json_decode(
+        $data = json_decode(
             $payload,
             true,
             flags: JSON_THROW_ON_ERROR
         );
-        
+
         $eventType = $data['headers'][MessageHeader::EVENT_TYPE];
         $eventFqcn = $this
             ->inflector
