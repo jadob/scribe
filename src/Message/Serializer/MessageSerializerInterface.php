@@ -9,4 +9,6 @@ use Jadob\Scribe\Message\Message;
 interface MessageSerializerInterface
 {
     public function serialize(Message $message): string;
+
+    public function deserialize(string $payload): Message;
 }

@@ -35,4 +35,25 @@ final readonly class MessageSerializer implements MessageSerializerInterface
             $normalizedMessage,
             \JSON_THROW_ON_ERROR);
     }
+
+    public function deserialize(string $payload): Message
+    {
+        $data = \json_decode(
+            $payload,
+            true,
+            flags: JSON_THROW_ON_ERROR
+        );
+        
+        $eventType = $data['headers'][MessageHeader::EVENT_TYPE];
+        $eventFqcn = $this
+            ->inflector
+            ->fromFqcn($eventType);
+
+        return $this
+            ->normalizer
+            ->denormalize(
+                $data,
+                $eventFqcn,
+            );
+    }
 }
