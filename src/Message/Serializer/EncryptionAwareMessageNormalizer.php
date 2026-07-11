@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Jadob\Scribe\Message\Serializer;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
+use CuyZ\Valinor\Normalizer\Format;
+use CuyZ\Valinor\Normalizer\Normalizer;
+use CuyZ\Valinor\NormalizerBuilder;
 use Jadob\Scribe\Event\EventInterface;
 use Jadob\Scribe\Event\EventPayload;
 use Jadob\Scribe\Message\Encryption\EventEncryptionProviderInterface;
@@ -26,8 +30,11 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
 {
     public function __construct(
         private EventEncryptionProviderInterface $eventEncryptionProvider,
-        private EncryptionKeyProviderInterface $encryptionKeyProvider,
-    ) {
+        private EncryptionKeyProviderInterface   $encryptionKeyProvider,
+        private Normalizer $normalizer,
+        private TreeMapper $mapper,
+    )
+    {
     }
 
     /**
@@ -37,7 +44,11 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
      */
     public function normalize(Message $message): array
     {
-        $eventPayload = [];
+        /** @var array $normalizedEventPayload */
+        $normalizedEventPayload = $this
+            ->normalizer
+            ->normalize($message);
+
         $event = $message->event;
         $eventReflection = new ReflectionClass($event);
 
@@ -55,60 +66,58 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
             $val = $property->getValue($event);
             $key = $property->getName();
 
-            if ($val instanceof Stringable) {
-                $val = (string) $val;
-            }
-
             if ($eventPayloadConfig !== null && $eventPayloadConfig->encrypted) {
                 if ($encryptionKey === null) {
                     $encryptionKey = $this
                         ->encryptionKeyProvider
                         ->getForAggregate(
-                            (string) $message->headers[MessageHeader::AGGREGATE_ID]
+                            (string)$message->headers[MessageHeader::AGGREGATE_ID]
                         );
                 }
 
-                $eventPayload[$key] = $this
+                $normalizedEventPayload['event'][$key] = $this
                     ->eventEncryptionProvider
                     ->encrypt(
                         $val,
                         $encryptionKey,
                     );
 
-                continue;
             }
-
-            $eventPayload[$key] = $val;
         }
 
-        return [
-            'headers' => $message->headers,
-            'payload' => $eventPayload,
-        ];
+        return $normalizedEventPayload;
     }
 
     /**
-     * @param MessagePayload  $message
+     * @param MessagePayload $message
      * @param class-string<T> $eventFqcn
      *
      * @return Message<T>
      */
     public function denormalize(
-        array $message,
-        string $eventId,
+        array  $message,
         string $eventFqcn,
-    ): Message {
+    ): Message
+    {
+
         $eventReflection = new ReflectionClass($eventFqcn);
         foreach ($eventReflection->getProperties() as $property) {
-            $attributes = array_filter(
-                $property->getAttributes(),
-                fn (ReflectionAttribute $attribute) => $attribute->getName() === EventPayload::class
-            );
-        }
+            $attributes = $property->getAttributes(EventPayload::class);
 
-        $event = $eventFqcn::reconstitute(
-            $message['payload'],
-        );
+            if (count($attributes) === 0) {
+                continue;
+            }
+
+           dd('weszlo tu');
+        }
+        
+        $event = $this
+            ->mapper
+            ->map(
+                $eventFqcn,
+                $message['event']
+            );
+
 
         return Message::create(
             $event,
