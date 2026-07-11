@@ -64,13 +64,18 @@ readonly class AggregateRootRepository
             ->dispatch(...$events);
     }
 
-
+    /**
+     * @throws NoEventsRecordedException
+     */
     public function load(AggregateRootIdInterface $aggregateRootId): AggregateRootInterface
     {
         $messages = $this
             ->messageRepository
             ->load($aggregateRootId);
 
+        if (count($messages) === 0) {
+            throw new NoEventsRecordedException(sprintf('No events found for aggregate "%s"', $aggregateRootId));
+        }
 
         return $this->aggregateRootClass::recreate(
             $aggregateRootId,
