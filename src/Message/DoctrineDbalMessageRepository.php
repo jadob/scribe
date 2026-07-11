@@ -53,7 +53,7 @@ final readonly class DoctrineDbalMessageRepository implements MessageRepositoryI
                     self::EVENT_STORE_TABLE_NAME,
                     [
                         'id' => Uuid::uuid7()->getBytes(),
-                        'aggregate_id' => Uuid::fromString($aggregateId)->toString(),
+                        'aggregate_id' => Uuid::fromString($aggregateId)->getBytes(),
                         'aggregate_revision' => $eventVersion,
                         'aggregate_type' => $aggregateType,
                         'recorded_at' => $recordedAt,
