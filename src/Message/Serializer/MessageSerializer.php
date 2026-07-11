@@ -10,6 +10,7 @@ use Jadob\Scribe\Message\MessageHeader;
 use function get_class;
 use function json_decode;
 use function json_encode;
+
 use const JSON_THROW_ON_ERROR;
 
 final readonly class MessageSerializer implements MessageSerializerInterface
