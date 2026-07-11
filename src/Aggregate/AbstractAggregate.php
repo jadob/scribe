@@ -55,6 +55,7 @@ abstract class AbstractAggregate implements AggregateRootInterface
         $self = new static();
         $self->aggregateId = $aggregateRootId;
         foreach ($events as $event) {
+            $self->aggregateRevision++;
             $self->handle($event);
         }
 
