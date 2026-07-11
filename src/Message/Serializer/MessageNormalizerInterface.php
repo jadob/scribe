@@ -29,7 +29,6 @@ interface MessageNormalizerInterface
      */
     public function denormalize(
         array $message,
-        string $eventId,
         string $eventFqcn
     ): Message;
 }
