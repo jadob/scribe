@@ -125,7 +125,7 @@ final readonly class DoctrineDbalMessageRepository implements MessageRepositoryI
                     ->create(),
                 Column::editor()
                     ->setName(UnqualifiedName::unquoted('recorded_at'))
-                    ->setType(Type::getType(Types::DATE_IMMUTABLE))
+                    ->setType(Type::getType(Types::DATETIME_IMMUTABLE))
                     ->setLength(256)
                     ->create(),
                 Column::editor()
