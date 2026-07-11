@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.3.0] - 2026-07-11
+
+### Added
+- decrypting encrypted payload events in `EncryptionAwareMessageNormalizer`
+
+### Changed
+- `AggregateRootRepository::load()` now throws an exception when no events was found in persistence.
+
+### Fixed
+- `EncryptionAwareMessageNormalizer`: data for normalization is now taken from normalizer output, not from reflection
+- `EncryptionAwareMessageNormalizer`: payload is restored to its original form after decrypting
+
 ## [0.2.0] - 2026-07-11
 
 ### Added
