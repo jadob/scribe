@@ -56,7 +56,7 @@ final readonly class DoctrineDbalMessageRepository implements MessageRepositoryI
                         'aggregate_id' => Uuid::fromString($aggregateId)->getBytes(),
                         'aggregate_revision' => $eventVersion,
                         'aggregate_type' => $aggregateType,
-                        'recorded_at' => $recordedAt,
+                        'recorded_at' => \DateTimeImmutable::createFromTimestamp($recordedAt)->format('Y-m-d H:i:s'),
                         'payload' => $serializedMessage,
                     ]
                 );
