@@ -89,10 +89,11 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
      * @return Message<T>
      */
     public function denormalize(
-        array  $message,
+        array $message,
         string $eventFqcn,
-    ): Message
-    {
+    ): Message {
+        /** @var EncryptionKeyInterface|null $encryptionKey */
+        $encryptionKey = null;
 
         $eventReflection = new ReflectionClass($eventFqcn);
         foreach ($eventReflection->getProperties() as $property) {
@@ -102,9 +103,28 @@ final readonly class EncryptionAwareMessageNormalizer implements MessageNormaliz
                 continue;
             }
 
-           dd('weszlo tu');
+            $eventPayloadConfig = $attributes[0]->newInstance();
+            $key = $property->getName();
+            $value = $message['event'][$key];
+
+            if ($eventPayloadConfig !== null && $eventPayloadConfig->encrypted) {
+                if ($encryptionKey === null) {
+                    $encryptionKey = $this
+                        ->encryptionKeyProvider
+                        ->getForAggregate(
+                            (string) $message['headers'][MessageHeader::AGGREGATE_ID]
+                        );
+                }
+
+                $message['event'][$key] = $this
+                    ->eventEncryptionProvider
+                    ->decrypt(
+                        $value,
+                        $encryptionKey,
+                    );
+            }
         }
-        
+
         $event = $this
             ->mapper
             ->map(
