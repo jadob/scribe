@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-11
+
+### Added
+- added Event listener contracts to be used in eg. projections
+- aggregate repository is now able to load events from persistence and recreate the aggregate
+
+### Changed
+- `EventInterface` is now deprecated
+- events are now processed by using `cuyz/valinor`
+
 ## [0.1.1] - 2026-07-05
 
 ### Added
