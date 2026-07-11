@@ -30,7 +30,35 @@ final readonly class DoctrineDbalMessageRepository implements MessageRepositoryI
 
     public function load(AggregateRootIdInterface $aggregateRootId): array
     {
-        // TODO: Implement load() method.
+        $this->ensureTableExists();
+
+        /** @var array{
+         *     id: non-empty-string,
+         *     aggregate_id: non-empty-string,
+         *     aggregate_type: class-string,
+         *     aggregate_revision: int,
+         *     recorded_at: non-empty-string,
+         *     payload: non-empty-string
+         * }[] $rawMessages
+         */
+        $rawMessages = $this
+            ->connection
+            ->createQueryBuilder()
+            ->select('*')
+            ->from(self::EVENT_STORE_TABLE_NAME, 'es')
+            ->where('es.aggregate_id = :id')
+            ->orderBy('es.aggregate_revision', 'ASC')
+            ->setParameter('id', Uuid::fromString((string) $aggregateRootId)->getBytes())
+            ->fetchAllAssociative();
+
+        $output = [];
+        foreach ($rawMessages as $rawMessage) {
+            $output[] = $this
+                ->messageSerializer
+                ->deserialize($rawMessage['payload']);
+        }
+        
+        return $output;
     }
 
     public function store(Message ...$messages): void
