@@ -65,7 +65,7 @@ final readonly class Aes256GcmEncryptionProvider implements EventEncryptionProvi
         $tag = base64_decode($explodedValue[1], true);
         $ciphertext = base64_decode($explodedValue[2], true);
 
-        return openssl_decrypt(
+        $value = openssl_decrypt(
             $ciphertext,
             self::CIPHER,
             $encryptionKey,
@@ -73,6 +73,8 @@ final readonly class Aes256GcmEncryptionProvider implements EventEncryptionProvi
             $iv,
             $tag
         );
+
+        return $this->denormalizePayload($value);
     }
 
     /**
@@ -84,6 +86,16 @@ final readonly class Aes256GcmEncryptionProvider implements EventEncryptionProvi
         return json_encode(
             $payload,
             JSON_THROW_ON_ERROR
+        );
+    }
+
+    private function denormalizePayload(
+        mixed $payload
+    ): string {
+        return json_decode(
+            $payload,
+            true,
+            flags: JSON_THROW_ON_ERROR
         );
     }
 
